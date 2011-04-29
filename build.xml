@@ -1,0 +1,102 @@
+<project name="Ant Builder" default="dist" basedir=".">
+	<description>
+        Application build file.
+    </description>
+	<!-- set global properties for this build -->
+	<property name="src" location="src" />
+	<property name="build" location="build" />
+	<property name="build-classes" location="${build}/classes" />	
+	<property name="dist" location="${build}/dist"/>
+	<!-- change this value to the name of the application -->
+	<property name="app.name" value="sinatra_speech_javaclient"/>
+
+	
+	<target name="init">
+		<available property="keystore.exists" file="tempKeystore"/>
+		<!-- Create the time stamp -->
+		<tstamp />
+		<!-- Create the build directory structure used by compile -->
+		<mkdir dir="${build-classes}" />
+	</target>
+
+	<target name="compile" depends="init" description="compile the source ">
+		<!-- Compile the java code from ${src} into ${build} -->
+		<javac destdir="${build-classes}" >
+			<src path="${src}"/>
+			<classpath>
+				<fileset dir="lib" >
+					<include name="*.jar"/>
+				</fileset>
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="jar" depends="compile" description="generate the jar">
+		<!-- Create the distribution directory -->
+		<mkdir dir="${dist}/lib" />
+
+		<jar jarfile="${dist}/lib/${app.name}.jar" basedir="${build-classes}" >
+			<include name="**/*"/>
+		</jar>
+	</target>
+
+	<target name="dist" depends="compile, keystore">
+		<copy todir="${dist}/lib">
+			<fileset dir="${src}/lib" >
+				<include name="*.jar"/>
+			</fileset>
+		</copy>
+		<jar destfile="${dist}/lib/${app.name}.jar">
+            <fileset dir="${build-classes}" >
+            </fileset>
+	    </jar>
+		<signjar alias="unknown"
+		        storepass="public" keystore="tempKeystore" >
+			<fileset dir="${dist}/lib">
+				<include name="*.jar"/>
+			</fileset>
+		</signjar>
+		
+		<!--
+		<copy todir="${dist}/lib/${app.name}">
+                        <fileset dir="${build-classes}" >
+                        </fileset>
+                </copy>
+         -->
+		<copy todir="${dist}">
+			<fileset dir="${src}/bin" >
+			</fileset>
+		</copy>
+		
+		<zip destfile="${build}/${app.name}-${DSTAMP}.zip" basedir="${dist}">
+		</zip>
+	</target>
+	
+	
+	<target name="clean" description="clean up">
+		<!-- Delete the ${build} and ${dist} directory trees -->
+		<delete dir="${build}" />
+		<delete dir="${dist}" />
+	</target>
+	
+	<target name="run" depends="compile">
+		<java classname="ee.phon.ioc.awebrec.client.RecFrame" fork="true" maxmemory="256M">
+			<assertions>
+			  <disable/>
+			</assertions>
+			<classpath>
+				<fileset dir="lib" >
+					<include name="*.jar"/>
+				</fileset>
+				<pathelement location="${build-classes}"/>
+			</classpath>
+		</java>
+	</target>
+	
+	
+    <target name="keystore" unless="keystore.exists">
+        <genkey alias="unknown" storepass="public" keystore="tempKeystore"
+            dname="CN=Anonymous Signature, OU=unknown, o=unknown, c=unknown" />
+    </target>
+
+</project>
