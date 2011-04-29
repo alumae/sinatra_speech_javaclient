@@ -8,7 +8,7 @@ import java.nio.ByteBuffer;
 public class RecSessionHandler {
 	private final static int ALLOCATION_SIZE = 1000000;
 	private final static int FETCH_RESULT_DELAY = 500;
-	private final static int SEND_BUFFER_SIZE = 1024*64;
+	private final static int SEND_BUFFER_SIZE = 1024*16;
 	
 	private ByteFIFO buffer;
 	RecSession recSession;

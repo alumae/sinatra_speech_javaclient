@@ -28,7 +28,7 @@ public class AWebRecSession implements RecSession {
 	private Properties configuration = new Properties();
 
 	
-	public void AWebRecSession()  {
+	public AWebRecSession()  {
 		// set default base URL
 		configuration.setProperty(CONF_BASE_URL, "http://localhost:4567/recognizer");
 	}
@@ -69,7 +69,7 @@ public class AWebRecSession implements RecSession {
 	}
 
 	private Map<String, String> makeHttpRequest(String method, String suffix, byte[] body) throws IOException {
-		 String urlStr = "http://localhost:4567/recognizer" + suffix;
+		 String urlStr = getConfiguration().getProperty(CONF_BASE_URL) + suffix;
 		 System.out.println(method + " to " + urlStr);
 		 
 		 URL url = new URL(urlStr);
@@ -115,8 +115,5 @@ public class AWebRecSession implements RecSession {
 	public void setConfiguration(Properties configuration) {
 		this.configuration = configuration;
 	}
-
-
-
 
 }
