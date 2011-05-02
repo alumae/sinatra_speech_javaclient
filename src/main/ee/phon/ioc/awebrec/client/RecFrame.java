@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -22,8 +23,9 @@ import edu.cmu.sphinx.frontend.util.VUMeterPanel;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
+import java.util.Properties;
 
-public class RecFrame extends JFrame implements RecResultReceiver {
+public class RecFrame extends JInternalFrame implements RecResultReceiver {
 
 	class MyVUMeterMonitor extends BaseDataProcessor {
 		   @Override
@@ -42,6 +44,7 @@ public class RecFrame extends JFrame implements RecResultReceiver {
 		
 	}
 	
+	private Properties configuration = new Properties();
 	private JPanel contentPane;
 	final private VUMeter vumeter;
 	final VUMeterPanel vuMeterPanel;
@@ -60,6 +63,16 @@ public class RecFrame extends JFrame implements RecResultReceiver {
 	 * Create the frame.
 	 */
 	public RecFrame() {
+		this(new Properties());
+	}
+
+
+	/**
+	 * Create the frame.
+	 * @param confuguration TODO
+	 */
+	public RecFrame(Properties configuration) {
+		this.configuration = configuration;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -131,7 +144,7 @@ public class RecFrame extends JFrame implements RecResultReceiver {
 	}
 
 	private void startRec() throws IOException, NotAvailableException {
-		recSessionHandler = new RecSessionHandler(this);				
+		recSessionHandler = new RecSessionHandler(this, configuration);				
 	}
 
 	
@@ -196,7 +209,7 @@ public class RecFrame extends JFrame implements RecResultReceiver {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					final RecFrame frame = new RecFrame();
+					final RecFrame frame = new RecFrame(new Properties());
 					frame.setVisible(true);
 					frame.startMicrophone();
 

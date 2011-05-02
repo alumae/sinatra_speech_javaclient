@@ -1,6 +1,7 @@
 package ee.phon.ioc.awebrec.client;
 
 import java.io.IOException;
+import java.util.Properties;
 
 public class RecSessionHandler {
 	private final static int ALLOCATION_SIZE = 1000000;
@@ -8,7 +9,7 @@ public class RecSessionHandler {
 	private final static int SEND_BUFFER_SIZE = 1024*16;
 	
 	private ByteFIFO buffer;
-	private RecSession recSession;
+	private AWebRecSession recSession;
 	private String result;
 	private boolean finishing = false;
 	private final RecResultReceiver resultReceiver;
@@ -21,10 +22,11 @@ public class RecSessionHandler {
 		this.finishing = finishing;
 	}
 
-	public RecSessionHandler(RecResultReceiver resultReceiver) throws IOException, NotAvailableException {
+	public RecSessionHandler(RecResultReceiver resultReceiver, Properties configuration) throws IOException, NotAvailableException {
 		this.resultReceiver = resultReceiver;
 		buffer = new ByteFIFO(ALLOCATION_SIZE);
 		recSession = new AWebRecSession();
+		recSession.setConfiguration(configuration);
 		recSession.create();
 		Thread handler = new Thread() {
 			@Override
