@@ -1,9 +1,6 @@
 package ee.phon.ioc.awebrec.client;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.nio.ByteBuffer;
 
 public class RecSessionHandler {
 	private final static int ALLOCATION_SIZE = 1000000;
@@ -11,10 +8,10 @@ public class RecSessionHandler {
 	private final static int SEND_BUFFER_SIZE = 1024*16;
 	
 	private ByteFIFO buffer;
-	RecSession recSession;
-	String result;
-	boolean finishing = false;
-	final RecResultReceiver resultReceiver;
+	private RecSession recSession;
+	private String result;
+	private boolean finishing = false;
+	private final RecResultReceiver resultReceiver;
 	
 	public boolean isFinishing() {
 		return finishing;
@@ -30,6 +27,7 @@ public class RecSessionHandler {
 		recSession = new AWebRecSession();
 		recSession.create();
 		Thread handler = new Thread() {
+			@Override
 			public void run() {
 				try {
 					synchronized (buffer) {
@@ -70,22 +68,16 @@ public class RecSessionHandler {
 		try {
 			synchronized (buffer) {
 				buffer.add(bytes);
-				buffer.notify();	
+				buffer.notify();
 			}
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			System.out.println(e);
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
-		
-		
 	}
 
 	public void waitFinal() throws InterruptedException, IOException {
-		System.out.println("waitFinal 0");
 		synchronized (buffer) {
 			while (!buffer.isEmpty()) {
-				System.out.println("waitFinal wait(), buffer size=" + buffer.getSize());
 				buffer.wait();
 			}
 		}

@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JTextArea;
@@ -17,7 +18,6 @@ import edu.cmu.sphinx.frontend.DoubleData;
 import edu.cmu.sphinx.frontend.util.FrontEndUtils;
 import edu.cmu.sphinx.frontend.util.Microphone;
 import edu.cmu.sphinx.frontend.util.VUMeter;
-import edu.cmu.sphinx.frontend.util.VUMeterMonitor;
 import edu.cmu.sphinx.frontend.util.VUMeterPanel;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -68,16 +68,26 @@ public class RecFrame extends JFrame implements RecResultReceiver {
 		setContentPane(contentPane);
 		
 		textArea = new JTextArea();
+		textArea.setLineWrap(true);
 		contentPane.add(textArea, BorderLayout.CENTER);
 		
 		final JButton btnStart = new JButton("Speak");
 		btnStart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if (!speaking) {
-					stopping = false;
-					btnStart.setText("Stop");
-					startRec();
-					speaking = true;
+					try {
+						stopping = false;
+						btnStart.setText("Stop");
+						
+						startRec();
+						speaking = true;
+					} catch (Exception e) {
+						JOptionPane.showMessageDialog(RecFrame.this, "Couldn't create recognizer session: " + e.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+
+						btnStart.setText("Speak");
+						btnStart.setEnabled(true);
+						speaking = false;
+					}
 					
 				} else {
 					stopping = true;
@@ -120,17 +130,8 @@ public class RecFrame extends JFrame implements RecResultReceiver {
 		
 	}
 
-	private void startRec() {
-		try {
-			recSessionHandler = new RecSessionHandler(this);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NotAvailableException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-				
+	private void startRec() throws IOException, NotAvailableException {
+		recSessionHandler = new RecSessionHandler(this);				
 	}
 
 	
@@ -147,7 +148,8 @@ public class RecFrame extends JFrame implements RecResultReceiver {
       Thread eq = new Thread() {
 
     	  
-          public void run() {
+          @Override
+		public void run() {
 				try {
 			        while (true) {
 			        	Data d = getMonitor().getData();
