@@ -10,7 +10,7 @@ public class RecApplet extends JApplet {
 
 	public static final String BASE_URL = "base_url";
 	
-	private RecFrame fr;
+	private RecPanel fr;
 
 	private Properties conf;
 
@@ -20,7 +20,7 @@ public class RecApplet extends JApplet {
 	public RecApplet() {
 
 		conf = new Properties();
-		fr = new RecFrame(conf);
+		fr = new RecPanel(conf);
 		getContentPane().add(fr, BorderLayout.CENTER);
 		fr.setVisible(true);
 

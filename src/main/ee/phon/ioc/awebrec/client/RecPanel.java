@@ -25,7 +25,7 @@ import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.util.Properties;
 
-public class RecFrame extends JInternalFrame implements RecResultReceiver {
+public class RecPanel extends JPanel implements RecResultReceiver {
 
 	class MyVUMeterMonitor extends BaseDataProcessor {
 		   @Override
@@ -62,7 +62,7 @@ public class RecFrame extends JInternalFrame implements RecResultReceiver {
 	/**
 	 * Create the frame.
 	 */
-	public RecFrame() {
+	public RecPanel() {
 		this(new Properties());
 	}
 
@@ -71,14 +71,14 @@ public class RecFrame extends JInternalFrame implements RecResultReceiver {
 	 * Create the frame.
 	 * @param confuguration TODO
 	 */
-	public RecFrame(Properties configuration) {
+	public RecPanel(Properties configuration) {
 		this.configuration = configuration;
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
-		contentPane = new JPanel();
+		
+		//setBounds(100, 100, 450, 300);
+		contentPane = this;
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
-		setContentPane(contentPane);
+		
 		
 		textArea = new JTextArea();
 		textArea.setLineWrap(true);
@@ -95,7 +95,7 @@ public class RecFrame extends JInternalFrame implements RecResultReceiver {
 						startRec();
 						speaking = true;
 					} catch (Exception e) {
-						JOptionPane.showMessageDialog(RecFrame.this, "Couldn't create recognizer session: " + e.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(RecPanel.this, "Couldn't create recognizer session: " + e.getLocalizedMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 
 						btnStart.setText("Speak");
 						btnStart.setEnabled(true);
@@ -209,9 +209,14 @@ public class RecFrame extends JInternalFrame implements RecResultReceiver {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					final RecFrame frame = new RecFrame(new Properties());
-					frame.setVisible(true);
-					frame.startMicrophone();
+					final RecPanel recPanel = new RecPanel(new Properties());
+					final JFrame fr = new JFrame();
+					
+					fr.getContentPane().add(recPanel);
+					fr.setBounds(100, 100, 450, 300);
+					fr.setVisible(true);
+					fr.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+					recPanel.startMicrophone();
 
 				} catch (Exception e) {
 					e.printStackTrace();

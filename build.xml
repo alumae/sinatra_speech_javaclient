@@ -1,4 +1,12 @@
 <project name="Ant Builder" default="dist" basedir=".">
+
+    <property name="fjepPath" value="ant/lib/fatjar.jar"/>
+    <taskdef name="fatjar.build" classname="net.sf.fjep.anttask.FJBuildTask" classpath="${fjepPath}" loaderref="${fjepPath}"/>
+    <typedef name="fatjar.manifest" classname="net.sf.fjep.anttask.FJManifestType" classpath="${fjepPath}" loaderref="${fjepPath}"/>
+    <typedef name="fatjar.exclude" classname="net.sf.fjep.anttask.FJExcludeType" classpath="${fjepPath}" loaderref="${fjepPath}"/>
+    <typedef name="fatjar.jarsource" classname="net.sf.fjep.anttask.FJJarSourceType" classpath="${fjepPath}" loaderref="${fjepPath}" />
+    <typedef name="fatjar.filesource" classname="net.sf.fjep.anttask.FJFileSourceType" classpath="${fjepPath}" loaderref="${fjepPath}"/>
+	
 	<description>
         Application build file.
     </description>
@@ -42,7 +50,7 @@
 
 	<target name="dist" depends="compile, keystore">
 		<copy todir="${dist}/lib">
-			<fileset dir="${src}/lib" >
+			<fileset dir="lib" >
 				<include name="*.jar"/>
 			</fileset>
 		</copy>
@@ -72,6 +80,18 @@
 		</zip>
 	</target>
 	
+	
+	<target name="create-fat-jar" depends="compile,keystore">
+		<fatjar.build output="${dist}/${app.name}-full.jar">
+			<fatjar.manifest mainclass="ee.phon.ioc.awebrec.client.RecApplet" /> 
+    		<fatjar.filesource path="${build-classes}" relpath="" /> 
+    		<fatjar.jarsource file="lib/sphinx4.jar" relpath="" /> 
+		</fatjar.build>
+	 
+		<signjar alias="unknown"
+		        storepass="public" keystore="tempKeystore" jar="${dist}/${app.name}-full.jar"/>
+
+	</target>	
 	
 	<target name="clean" description="clean up">
 		<!-- Delete the ${build} and ${dist} directory trees -->
