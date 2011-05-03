@@ -53,6 +53,8 @@ public class RecPanel extends JPanel implements RecResultReceiver {
 	private boolean stopping;
 	private RecSessionHandler recSessionHandler;
 	private JTextArea textArea;
+	private Thread micThread;
+	private boolean micStopRequested = false; 
 	
 	public MyVUMeterMonitor getMonitor() {
 		return monitor;
@@ -149,7 +151,7 @@ public class RecPanel extends JPanel implements RecResultReceiver {
 
 	
 	public void startMicrophone() {
-		Microphone mic = new Microphone( 16000, 16, 1,
+		final Microphone mic = new Microphone( 16000, 16, 1,
                 true, true, true, 10, false,
                 "selectChannel", 2, "default", 6400);
 
@@ -158,13 +160,14 @@ public class RecPanel extends JPanel implements RecResultReceiver {
 
       
       getMonitor().setPredecessor(mic);
-      Thread eq = new Thread() {
+      micStopRequested = false;
+      micThread = new Thread() {
 
     	  
           @Override
 		public void run() {
 				try {
-			        while (true) {
+			        while (!micStopRequested) {
 			        	Data d = getMonitor().getData();
 			        	if ((recSessionHandler != null) && (speaking)) {
 					        if (d instanceof DoubleData) {
@@ -189,16 +192,26 @@ public class RecPanel extends JPanel implements RecResultReceiver {
 			        }
 				} catch (Exception e) {
 					e.printStackTrace();
+				} finally {
+					mic.stopRecording();
 				}
 			}
 		};
-		eq.setDaemon(true);
-		eq.start();
+		micThread.setDaemon(true);
+		micThread.start();
 		
 	}
       
 
-      
+    public void stopMicrophone() {
+    	micStopRequested = true;
+    	try {
+			micThread.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
 	
 	
 

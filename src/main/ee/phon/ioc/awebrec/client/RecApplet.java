@@ -10,7 +10,7 @@ public class RecApplet extends JApplet {
 
 	public static final String BASE_URL = "base_url";
 	
-	private RecPanel fr;
+	private RecPanel recUi;
 
 	private Properties conf;
 
@@ -20,22 +20,29 @@ public class RecApplet extends JApplet {
 	public RecApplet() {
 
 		conf = new Properties();
-		fr = new RecPanel(conf);
-		getContentPane().add(fr, BorderLayout.CENTER);
-		fr.setVisible(true);
+		recUi = new RecPanel(conf);
+		getContentPane().add(recUi, BorderLayout.CENTER);
+		recUi.setVisible(true);
 
 	}
 	
 	@Override
 	public void init() {
-		
 		String baseUrl   = getParameter(BASE_URL);
 		if (baseUrl != null) {
 			conf.setProperty(AWebRecSession.CONF_BASE_URL, baseUrl);
 		}
-		
-		fr.startMicrophone();
+	}
+	
+	@Override
+	public void start() {
+		recUi.startMicrophone();
+	}
+	
 
+	@Override
+	public void stop() {
+		recUi.stopMicrophone();
 	}
 
 }
