@@ -55,6 +55,7 @@ public class RecPanel extends JPanel implements RecResultReceiver {
 	private JTextArea textArea;
 	private Thread micThread;
 	private boolean micStopRequested = false; 
+	private String finalResult = ""; 
 	
 	public MyVUMeterMonitor getMonitor() {
 		return monitor;
@@ -83,6 +84,7 @@ public class RecPanel extends JPanel implements RecResultReceiver {
 		
 		
 		textArea = new JTextArea();
+		textArea.setWrapStyleWord(true);
 		textArea.setLineWrap(true);
 		contentPane.add(textArea, BorderLayout.CENTER);
 		
@@ -222,7 +224,9 @@ public class RecPanel extends JPanel implements RecResultReceiver {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					final RecPanel recPanel = new RecPanel(new Properties());
+					Properties conf = new Properties();
+					conf.setProperty(AWebRecSession.CONF_BASE_URL, "http://localhost:4567/recognizer");
+					final RecPanel recPanel = new RecPanel(conf);
 					final JFrame fr = new JFrame();
 					
 					fr.getContentPane().add(recPanel);
@@ -241,9 +245,12 @@ public class RecPanel extends JPanel implements RecResultReceiver {
 
 
 	@Override
-	public void receiveResult(String result, boolean is) {
-		textArea.setText(result);
+	public void receiveResult(String result, boolean isFinal) {
 		
+		textArea.setText(finalResult + result + (isFinal ? "." : ""));
+		if (isFinal) {
+			finalResult += result + ". ";
+		}
 	}
 	
 }
