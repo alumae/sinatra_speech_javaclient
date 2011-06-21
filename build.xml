@@ -100,7 +100,7 @@
 	</target>
 	
 	<target name="run" depends="compile">
-		<java classname="ee.phon.ioc.awebrec.client.RecFrame" fork="true" maxmemory="256M">
+		<java classname="ee.phon.ioc.awebrec.client.RecPanel" fork="true" maxmemory="256M">
 			<assertions>
 			  <disable/>
 			</assertions>

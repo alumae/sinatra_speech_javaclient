@@ -225,7 +225,7 @@ public class RecPanel extends JPanel implements RecResultReceiver {
 			public void run() {
 				try {
 					Properties conf = new Properties();
-					conf.setProperty(AWebRecSession.CONF_BASE_URL, "http://localhost:4567/recognizer");
+					conf.setProperty(AWebRecSession.CONF_BASE_URL, "http://localhost:8080/");
 					final RecPanel recPanel = new RecPanel(conf);
 					final JFrame fr = new JFrame();
 					

@@ -9,7 +9,7 @@ public class RecSessionHandler {
 	private final static int SEND_BUFFER_SIZE = 1024*16;
 	
 	private ByteFIFO buffer;
-	private AWebRecSession recSession;
+	private ChunkedWebRecSession recSession;
 	private String result;
 	private boolean finishing = false;
 	private final RecResultReceiver resultReceiver;
@@ -25,7 +25,7 @@ public class RecSessionHandler {
 	public RecSessionHandler(RecResultReceiver resultReceiver, Properties configuration) throws IOException, NotAvailableException {
 		this.resultReceiver = resultReceiver;
 		buffer = new ByteFIFO(ALLOCATION_SIZE);
-		recSession = new AWebRecSession();
+		recSession = new ChunkedWebRecSession();
 		recSession.setConfiguration(configuration);
 		recSession.create();
 		Thread handler = new Thread() {
