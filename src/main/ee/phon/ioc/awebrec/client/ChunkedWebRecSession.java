@@ -64,13 +64,16 @@ public class ChunkedWebRecSession implements RecSession {
 			System.out.println("Wrote " + bytes.length + " bytes");
 		}
 		if (isLast) {
-			connection.getOutputStream().flush();
-			connection.getOutputStream().close();
-			InputStream is = connection.getInputStream();
-			Object obj = JSONValue.parse(new InputStreamReader(is));
-			JSONObject jsonObj=(JSONObject)obj;
-			result = ((JSONArray)((JSONObject)((JSONArray)jsonObj.get("hypotheses")).get(0)).get("utterance")).get(0).toString();
-			finished = true;
+			try {
+				connection.getOutputStream().close();
+				InputStream is = connection.getInputStream();
+				Object obj = JSONValue.parse(new InputStreamReader(is));
+				JSONObject jsonObj=(JSONObject)obj;
+				result = ((JSONArray)((JSONObject)((JSONArray)jsonObj.get("hypotheses")).get(0)).get("utterance")).get(0).toString();
+			} finally {
+				connection.disconnect();
+				finished = true;
+			}
 		}
 
 	}
