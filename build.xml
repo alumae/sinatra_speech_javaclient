@@ -86,6 +86,7 @@
 			<fatjar.manifest mainclass="ee.phon.ioc.awebrec.client.RecApplet" /> 
     		<fatjar.filesource path="${build-classes}" relpath="" /> 
     		<fatjar.jarsource file="lib/sphinx4.jar" relpath="" /> 
+			<fatjar.jarsource file="lib/json_simple-1.1.jar" relpath="" />
 		</fatjar.build>
 	 
 		<signjar alias="unknown"
