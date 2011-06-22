@@ -27,6 +27,11 @@ public class ChunkedWebRecSession implements RecSession {
 		configuration.setProperty(CONF_BASE_URL, "http://localhost:8080/");
 	}
 
+	public ChunkedWebRecSession(URL url)  {
+		// set default base URL
+		configuration.setProperty(CONF_BASE_URL, url.toExternalForm());
+	}
+	
 	
 	@Override
 	public void create() throws IOException, NotAvailableException {
