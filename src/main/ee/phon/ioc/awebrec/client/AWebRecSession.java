@@ -115,4 +115,10 @@ public class AWebRecSession implements RecSession {
 		this.configuration = configuration;
 	}
 
+	@Override
+	public void cancel() {
+		// TODO Auto-generated method stub
+		throw new RuntimeException("not implemented");
+	}
+
 }

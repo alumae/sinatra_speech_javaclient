@@ -12,4 +12,5 @@ public interface RecSession {
 	
 	boolean isFinished(); 
 	
+	void cancel();
 }

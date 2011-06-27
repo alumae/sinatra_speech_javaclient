@@ -81,11 +81,24 @@ public class ChunkedWebRecSession implements RecSession {
 
 	}
 
+	
+	
 	public Properties getConfiguration() {
 		return configuration;
 	}
 
 	public void setConfiguration(Properties configuration) {
 		this.configuration = configuration;
+	}
+
+	@Override
+	public void cancel() {
+		try {
+			connection.disconnect();
+		} catch (Exception e) {
+			// silent OK
+		} finally {
+			finished = true;
+		}
 	}	
 }
