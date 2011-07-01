@@ -247,9 +247,10 @@ public class RecPanel extends JPanel implements RecResultReceiver {
 	@Override
 	public void receiveResult(String result, boolean isFinal) {
 		
-		textArea.setText(finalResult + result + (isFinal ? "." : ""));
+		//textArea.re setText(finalResult + result + (isFinal ? "." : ""));
 		if (isFinal) {
-			finalResult += result + ". ";
+			result = result.length() > 0 ? result + ". " : ""; 
+			textArea.replaceSelection(result);
 		}
 	}
 	

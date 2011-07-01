@@ -27,6 +27,7 @@ public class RecSessionHandler {
 		buffer = new ByteFIFO(ALLOCATION_SIZE);
 		recSession = new ChunkedWebRecSession();
 		recSession.setConfiguration(configuration);
+		recSession.setUserAgentComment("RecPanel/0.1");
 		recSession.create();
 		Thread handler = new Thread() {
 			@Override
